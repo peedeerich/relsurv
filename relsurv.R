@@ -54,3 +54,8 @@ RS_stageWM <- rs.surv(Surv(Survival, VitalStatus) ~ StageSimple + ratetable(age 
 OS_surgery <- survfit(reg_Surv ~ SurgeryRule2, data=regall)
 
 RS_surgery <- rs.surv(Surv(Survival, VitalStatus) ~ SurgeryRule2 + ratetable(age = AgeDiag*365.24, sex="female", year = (DiagYear - 1960)*365.24), data=regall, ratetable=lifetab, method="ederer2")
+
+## split it by stage?
+
+RS_surg_stage <- rs.surv(Surv(Survival, VitalStatus) ~ SurgeryRule2 + addNA(StageSimple) + ratetable(age = AgeDiag*365.24, sex="female", year = (DiagYear - 1960)*365.24), data=regall, ratetable=lifetab, method="ederer2")
+
