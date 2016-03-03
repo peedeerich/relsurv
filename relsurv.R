@@ -6,6 +6,7 @@ require(relsurv)
 #Step 1 - load data
 
 regall <- read.csv("J:/regall.csv") # data address
+regall <- regall %>% filter(StageSimple!="0" | is.na(StageSimple))
 
 # Step 2 - construct survival objects
 
@@ -32,7 +33,18 @@ RS_pop <- rs.surv(reg_Surv ~ 1 + ratetable(age=AgeDiag*365.24, sex="female", yea
 
 # By age group
 
-OS_age <- survfit(reg_Surv ~ AgeCat5Diag,data=regall) #raw
+OS_age <- survfit(reg_Surv ~ AgeCat10Diag,data=regall) #raw
 
-RS_age <- rs.surv(Surv(Survival, VitalStatus) ~ AgeDiag + ratetable(age=AgeDiag*365.24, sex="female", year=(DiagYear-1960)*365.24), data=regall, ratetable=lifetab, method="ederer2") # no idea why but this does not work if you save the survival object first - it needs a function call at lhs of formula
+RS_age <- rs.surv(Surv(Survival, VitalStatus) ~ AgeCat10Diag + ratetable(age=AgeDiag*365.24, sex="female", year=(DiagYear-1960)*365.24), data=regall, ratetable=lifetab, method="ederer2") # no idea why but this does not work if you save the survival object first - it needs a function call at lhs of formula
 
+# By stage - our algorithm
+
+OS_stage <- survfit(reg_Surv ~ addNA(StageSimple), data = regall)
+
+RS_stage <- rs.surv(Surv(Survival, VitalStatus) ~ addNA(StageSimple) + ratetable(age = AgeDiag*365.24, sex="female", year = (DiagYear-1960)*365.24), data=regall, ratetable = lifetab, method="ederer2")
+
+# By stage - their algorithm
+
+OS_stageWM <- survfit(reg_Surv ~ StageSimple, data=regall, subset=(!is.na(IntegratedTNM)))
+
+RS_stageWM <- rs.surv(Surv(Survival, VitalStatus) ~ StageSimple + ratetable(age = AgeDiag*365.24, sex="female", year = (DiagYear-1960)*365.24), data=(regall %>% filter(!is.na(IntegratedTNM))), ratetable = lifetab, method="ederer2")
