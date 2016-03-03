@@ -19,3 +19,14 @@ reg_Surv_OC                                                   <- with(regall, Su
 # Step 3 - load in population background mortality
 
 lifetab <- transrate.hmd("mltper_1x1.txt", "fltper_1x1.txt")
+
+# Step 4 - relative survival calculations
+# use rs.surv (Ederer II method)
+
+# raw survival - KM curve
+
+OS_pop <- survfit(reg_Surv ~ 1)
+
+# population
+RS_pop <- rs.surv(reg_Surv ~ 1 + ratetable(age=AgeDiag*365.24, sex="female", year=(DiagYear-1960)*365.24), data=regall, ratetable=lifetab, method="ederer2") # pkg needs age and year in days; year 0 is 1960. see help file for details
+
