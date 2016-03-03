@@ -48,3 +48,9 @@ RS_stage <- rs.surv(Surv(Survival, VitalStatus) ~ addNA(StageSimple) + ratetable
 OS_stageWM <- survfit(reg_Surv ~ StageSimple, data=regall, subset=(!is.na(IntegratedTNM)))
 
 RS_stageWM <- rs.surv(Surv(Survival, VitalStatus) ~ StageSimple + ratetable(age = AgeDiag*365.24, sex="female", year = (DiagYear-1960)*365.24), data=(regall %>% filter(!is.na(IntegratedTNM))), ratetable = lifetab, method="ederer2")
+
+# by surgery - WARNING not to be interpreted as causal, improved fitness in surgery group -> better relative survival
+
+OS_surgery <- survfit(reg_Surv ~ SurgeryRule2, data=regall)
+
+RS_surgery <- rs.surv(Surv(Survival, VitalStatus) ~ SurgeryRule2 + ratetable(age = AgeDiag*365.24, sex="female", year = (DiagYear - 1960)*365.24), data=regall, ratetable=lifetab, method="ederer2")
