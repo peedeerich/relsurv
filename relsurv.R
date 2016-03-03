@@ -30,3 +30,9 @@ OS_pop <- survfit(reg_Surv ~ 1)
 # population
 RS_pop <- rs.surv(reg_Surv ~ 1 + ratetable(age=AgeDiag*365.24, sex="female", year=(DiagYear-1960)*365.24), data=regall, ratetable=lifetab, method="ederer2") # pkg needs age and year in days; year 0 is 1960. see help file for details
 
+# By age group
+
+OS_age <- survfit(reg_Surv ~ AgeCat5Diag,data=regall) #raw
+
+RS_age <- rs.surv(Surv(Survival, VitalStatus) ~ AgeDiag + ratetable(age=AgeDiag*365.24, sex="female", year=(DiagYear-1960)*365.24), data=regall, ratetable=lifetab, method="ederer2") # no idea why but this does not work if you save the survival object first - it needs a function call at lhs of formula
+
