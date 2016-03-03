@@ -15,3 +15,7 @@ regall$status[which(regall$CauseOfDeath == "Breast Cancer")]  <- 1
 regall$status[which(regall$CauseOfDeath != "Breast Cancer")]  <- 2
 reg_Surv_BC                                                   <- with(regall, Surv(Survival, status==1))
 reg_Surv_OC                                                   <- with(regall, Surv(Survival, status==2))
+
+# Step 3 - load in population background mortality
+
+lifetab <- transrate.hmd("mltper_1x1.txt", "fltper_1x1.txt")
