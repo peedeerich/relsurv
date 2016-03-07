@@ -59,3 +59,6 @@ RS_surgery <- rs.surv(Surv(Survival, VitalStatus) ~ SurgeryRule2 + ratetable(age
 
 RS_surg_stage <- rs.surv(Surv(Survival, VitalStatus) ~ SurgeryRule2 + addNA(StageSimple) + ratetable(age = AgeDiag*365.24, sex="female", year = (DiagYear - 1960)*365.24), data=regall, ratetable=lifetab, method="ederer2")
 
+###### need to extract 5 years surv
+
+RS_pop_5yr <- RS_pop$surv[which.min(abs(RS_pop$time-365.24*5))]
