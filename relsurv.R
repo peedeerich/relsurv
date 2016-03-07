@@ -3,6 +3,8 @@
 require(dplyr)
 require(relsurv)
 
+source("rs.extract.R")
+
 #Step 1 - load data
 
 regall <- read.csv("J:/regall.csv") # data address
@@ -61,4 +63,12 @@ RS_surg_stage <- rs.surv(Surv(Survival, VitalStatus) ~ SurgeryRule2 + addNA(Stag
 
 ###### need to extract 5 years surv
 
-RS_pop_5yr <- RS_pop$surv[which.min(abs(RS_pop$time-365.24*5))]
+RS_pop_5yr <- rs.extract(RS_pop)
+
+RS_age_5yr <- rs.extract(RS_age)
+
+RS_stage_5yr <- rs.extract(RS_stage)
+
+RS_stageWM <- rs.extract(RS_stageWM)
+
+# should maybe look at; age per yr rather than 10? Or 5yrcat but need to adapt in that case
