@@ -1,0 +1,53 @@
+---
+title: "Relative survival in BTAG registry data"
+author: "Paul Richards"
+date: "Monday, March 07, 2016"
+output: html_document
+---
+
+This document describes patterns in relative survival observed in the Bridging the Age Gap dataset. 
+
+```{r, include=FALSE}
+require(dplyr)
+require(relsurv)
+require(GGally)
+require(ggplot2)
+regall <- read.csv("J:/regall.csv") # data address
+regall <- regall %>% filter(StageSimple!="0" | is.na(StageSimple))
+regall$StageSimple <- factor(regall$StageSimple)
+
+# Step 2 - construct survival objects
+
+reg_Surv                                                      <- with(regall, Surv(Survival, VitalStatus))
+regall$status                                                 <- 0
+regall$status[which(regall$CauseOfDeath == "Breast Cancer")]  <- 1
+regall$status[which(regall$CauseOfDeath != "Breast Cancer")]  <- 2
+reg_Surv_BC                                                   <- with(regall, Surv(Survival, status==1))
+reg_Surv_OC                                                   <- with(regall, Surv(Survival, status==2))
+
+# Step 3 - load in population background mortality
+
+lifetab <- transrate.hmd("mltper_1x1.txt", "fltper_1x1.txt")
+```
+
+
+### Overall survival
+
+Overall survival for analyses which do not include treatment is calculated based on the number of days between diagnosis and death from any cause. Survival times are censored at the last date of data extraction if there is no record of death before this time.
+
+Overall survival for analyses which incorporate receipt of surgical treatment is defined as the number of days between the date 6 months from diagnosis and death from any cause. The survival time is undefined where death occurs less than 6 months from diagnosis. This is a result of the definition of the treatment groups (receipt of surgery to the breast within 6 months of the date of diagnosis).
+
+
+```{r}
+ggsurv(survfit(reg_Surv_BC~1)) + ylim(0,1)
+```
+
+
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

@@ -9,6 +9,7 @@ source("rs.extract.R")
 
 regall <- read.csv("J:/regall.csv") # data address
 regall <- regall %>% filter(StageSimple!="0" | is.na(StageSimple))
+regall$StageSimple <- factor(regall$StageSimple)
 
 # Step 2 - construct survival objects
 
@@ -38,6 +39,11 @@ RS_pop <- rs.surv(reg_Surv ~ 1 + ratetable(age=AgeDiag*365.24, sex="female", yea
 OS_age <- survfit(reg_Surv ~ AgeCat10Diag,data=regall) #raw
 
 RS_age <- rs.surv(Surv(Survival, VitalStatus) ~ AgeCat10Diag + ratetable(age=AgeDiag*365.24, sex="female", year=(DiagYear-1960)*365.24), data=regall, ratetable=lifetab, method="ederer2") # no idea why but this does not work if you save the survival object first - it needs a function call at lhs of formula
+
+# Out of interest what does it look like for 5 year age bands
+# Warning - dodgy for 95+ (possibly 90+)
+
+RS_age_5cat <- rs.surv(Surv(Survival, VitalStatus) ~ AgeCat5Diag + ratetable(age=AgeDiag*365.24, sex="female", year=(DiagYear-1960)*365.24), data=regall, ratetable=lifetab, method="ederer2")
 
 # By stage - our algorithm
 
